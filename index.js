@@ -50,11 +50,30 @@ app.delete('/api/persons/:id', (req, res) => {
 })
 
 app.post('/api/persons', (req, res) => {
-    const person = req.body
-    person.id = Math.floor(Math.random() * 1000000)
-    persons = persons.concat(person)
+    const newPerson = req.body
 
-    res.json(person)
+    if (!newPerson.name) {
+        return res.status(400).json({
+            error: 'name missing'
+        })
+    }
+
+    if (!newPerson.number) {
+        return res.status(400).json({
+            error: 'number missing'
+        })
+    }
+
+    if (persons.find(person => person.name === newPerson.name)) {
+        return res.status(400).json({
+            error: 'name already exists'
+        })
+    }
+
+    newPerson.id = Math.floor(Math.random() * 1000000)
+    persons = persons.concat(newPerson)
+
+    res.json(newPerson)
 })
 
 app.get('/info', (req, res) => {
