@@ -42,15 +42,9 @@ app.get('/api/persons', (req, res) => {
 })
 
 app.get('/api/persons/:id', (req, res) => {
-    const id = Number(req.params.id)
-    const person = persons.find(person => person.id === id)
-
-    if (person) {
-        res.json(person)
-    }
-    else {
-        res.status(404).end()
-    }
+    Person.findById(req.params.id).then(person => {
+        res.json(person.toJSON())
+    })
 })
 
 app.delete('/api/persons/:id', (req, res) => {
@@ -61,30 +55,28 @@ app.delete('/api/persons/:id', (req, res) => {
 })
 
 app.post('/api/persons', (req, res) => {
-    const newPerson = {...req.body}
+    const body = req.body
 
-    if (!newPerson.name) {
+    if (!body.name) {
         return res.status(400).json({
             error: 'name missing'
         })
     }
 
-    if (!newPerson.number) {
+    if (!body.number) {
         return res.status(400).json({
             error: 'number missing'
         })
     }
 
-    if (persons.find(person => person.name === newPerson.name)) {
-        return res.status(400).json({
-            error: 'name already exists'
-        })
-    }
+    const person = new Person({
+        name: body.name,
+        number: body.number
+    })
 
-    newPerson.id = Math.floor(Math.random() * 1000000)
-    persons = persons.concat(newPerson)
-
-    res.json(newPerson)
+    person.save().then(savedPerson => {
+        res.json(savedPerson.toJSON())
+    })
 })
 
 app.get('/info', (req, res) => {
