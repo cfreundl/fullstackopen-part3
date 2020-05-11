@@ -10,29 +10,6 @@ app.use(express.static('build'))
 app.use(express.json())
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
 
-let persons = [
-    {
-        "name": "Arto Hellas",
-        "number": "040-123456",
-        "id": 1
-    },
-    {
-        "name": "Ada Lovelace",
-        "number": "39-44-5323523",
-        "id": 2
-    },
-    {
-        "name": "Dan Abramov",
-        "number": "12-43-234345",
-        "id": 3
-    },
-    {
-        "name": "Mary Poppendieck",
-        "number": "39-23-6423122",
-        "id": 4
-    }
-]
-
 app.get('/api/persons', (req, res) => {
     Person.find({}).then(persons => {
         res.json(persons.map(person => person.toJSON()))
@@ -104,11 +81,12 @@ app.post('/api/persons', (req, res) => {
 })
 
 app.get('/info', (req, res) => {
-    res.send(`
-Phonebook has info for ${persons.length} people<br>
-<br>
-${new Date().toString()}
-    `)
+    Person.find({}).then(persons => {
+        res.send(`Phonebook has info for ${persons.length} people<br>
+        <br>
+        ${new Date().toString()}
+            `)
+    })
 })
 
 const errorHandler = (error, req, res, next) => {
