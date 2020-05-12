@@ -36,7 +36,7 @@ app.put('/api/persons/:id', (req, res, next) => {
         number: body.number,
     }
 
-    Person.findOneAndUpdate({ _id: req.params.id }, person, { new: true, runValidators: true })
+    Person.findOneAndUpdate({ _id: req.params.id }, person, { new: true, runValidators: true, context: 'query' })
     .then(updatedPerson => {
         if (updatedPerson) {
             res.json(updatedPerson.toJSON())
